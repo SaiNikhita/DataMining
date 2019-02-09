@@ -1,0 +1,29 @@
+library(readr)
+library(dplyr)
+library(party)
+library(rpart)
+library(rpart.plot)
+library(ROCR)
+library(magrittr)
+
+titanic3<-"https://goo.gl/At238b"%>%
+  read.csv%>%
+  select(survived,embarked,sex,sibsp,parch,fare)%>%
+  mutate(embarked=factor(embarked),sex=factor(sex))
+
+#splitting data
+.data<-c("training","test")%>%
+  sample(nrow(titanic3),replace=TRUE)%>%
+  split(titanic3,.)
+
+#implementation using rpart
+rtree_fit<-rpart(survived~.,.data$training)
+rpart.plot(rtree_fit)
+
+#implementation using ctree
+tree_fit<-ctree(survived~.,data=.data$training)
+tree_roc<-tree_fit%>%
+  predict(newdata=.data$test)%>%
+  prediction(.data$test$survived)%>%
+  performance("tpr","fpr")
+tree_roc
