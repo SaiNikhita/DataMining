@@ -1,0 +1,11 @@
+library(arules)
+library(arulesViz)
+library(datasets)
+
+data("Groceries")
+itemFrequencyPlot(Groceries,topN=20)
+itemsets<-eclat(Groceries,parameter=list(supp=0.001,maxlen=3))
+
+rules<-ruleInduction(itemsets,Groceries,confidence=0.6)
+inspect(rules[1:5])
+plot(rules,method="graph",interactive=TRUE,shading=NA)
