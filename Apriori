@@ -1,0 +1,16 @@
+library(arules)
+library(arulesViz)
+library(datasets)
+
+data("Groceries")
+itemFrequencyPlot(Groceries,topN=20,type="absolute")
+
+rules<-apriori(Groceries,parameter=list(supp=0.001,conf=0.6),
+               appearance=list(default="lhs",rhs="whole milk"),
+               control=list(verbose=F))
+rules<-sort(rules,by="confidence",decreasing=TRUE)
+options(digits=2)
+inspect(rules[1:5])
+
+#plotting
+plot(rules,method="graph",interactive=TRUE,shading=NA)
