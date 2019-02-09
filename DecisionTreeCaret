@@ -1,0 +1,70 @@
+### DECISION TREE-CARET(information gain) ###
+
+library(caret)
+library(rpart.plot)
+
+data_url<-c("https://archive.ics.uci.edu/ml/machine-learning-databases/car/car.data")
+download.file(url=data_url,destfile="car.data")
+
+car_df<-read.csv("car.data",sep=",",header=FALSE)
+
+#data slicing
+
+set.seed(3033)
+intrain<-createDataPartition(y=car_df, p=0.7, list=FALSE)
+training<-car_df[intrain,]
+testing<-car_df[-intrain,]
+
+#training the decision tree
+
+trctr<-trainControl(method="repeatedcv", number=10, repeats=3)
+set.seed(3333)
+dtree_fit<-train(V7 ~., data=training, method="rpart",
+                 parms=list(split="information"),
+                 trControl=trctr,
+                 tuneLength=10)
+
+dtree_fit
+
+#plotting
+prp(dtree_fit$finalModel, box.palette="Reds",tweak=1.2)
+
+#prediction
+test_pred<-predict(dtree_fit,newdata=testing)
+confusionMatrix(test_pred,testing$V7)
+
+
+### DECISION TREE-CARET(Gini Index) ###
+
+library(caret)
+library(rpart.plot)
+
+data_url<-c("https://archive.ics.uci.edu/ml/machine-learning-databases/car/car.data")
+download.file(url=data_url,destfile="car.data")
+
+car_df<-read.csv("car.data",sep=",",header=FALSE)
+
+#data slicing
+
+set.seed(3033)
+intrain<-createDataPartition(y=car_df, p=0.7, list=FALSE)
+training<-car_df[intrain,]
+testing<-car_df[-intrain,]
+
+#training the decision tree
+
+trctr<-trainControl(method="repeatedcv", number=10, repeats=3)
+set.seed(3333)
+dtree_fit_gini<-train(V7 ~., data=training, method="rpart",
+                 parms=list(split="gini"),
+                 trControl=trctr,
+                 tuneLength=10)
+
+dtree_fit
+
+#plotting
+prp(dtree_fit_gini$finalModel, box.palette="Blues",tweak=1.2)
+
+#prediction
+test_pred_gini<-predict(dtree_fit_gini,newdata=testing)
+confusionMatrix(test_pred_gini,testing$V7)
