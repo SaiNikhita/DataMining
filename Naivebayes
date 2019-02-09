@@ -1,0 +1,17 @@
+library(caTools)
+library(caret)
+library(e1071)
+
+f<-data.frame(iris)
+ind<-sample(nrow(iris),floor(nrow(iris)*0.7))
+train<-f[ind,]
+test<-f[-ind,]
+x_train<-train[,1:4]
+y_train<-train$Species
+x_test<-test[,1:4]
+y_test<-test$Species
+
+classifier=naiveBayes(x_train,y_train)
+predictions<-predict(classifier,x_test)
+confu<-confusionMatrix(predictions,y_test)
+print(confu)
