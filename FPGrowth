@@ -1,0 +1,7 @@
+library(rCBA)
+data("iris")
+classifier<-rCBA::buildFPGrowth(iris[sample(nrow(iris),20),],"Species",parallel=FALSE)
+model<-classifier$model
+predictions<-rCBA::classification(iris,model)
+table(predictions)
+sum(as.character(iris$Species)==as.character(predictions),na.rm=TRUE)/length(predictions)
